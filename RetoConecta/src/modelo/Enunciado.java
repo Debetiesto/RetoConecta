@@ -10,6 +10,11 @@ public class Enunciado {
     private boolean disponible;
     private String ruta;
     private List<UnidadDidactica> unidades;
+    
+    
+    public Enunciado() {
+    
+    }
 
     public Enunciado(List<UnidadDidactica> unidades) {
         this.unidades = unidades;
