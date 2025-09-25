@@ -1,37 +1,37 @@
 package controlador;
 
+import Modelo.Dificultad;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import modelo.ConvocatoriaExamen;
-import modelo.Dificultad;
 import modelo.Enunciado;
 import modelo.UnidadDidactica;
 
 public final class DaoImplementacionMySql implements Dao {
 
     private static DaoImplementacionMySql instance;
-
     // Atributo para conexion
+
     private ResourceBundle configFile;
     private String urlBD, userBD, passwordBD;
     // Atributos
     private Connection con;
     private PreparedStatement stmt;
-
     // Sentencias SQL
     final String VERTODO = "SELECT * FROM CONVOCATORIAEXAMEN";
-    final String VERRUTA = "SELECT RUTA FROM ENUNCIADO WHERE IDE = ?";
-    final String ASIGNARENUNCIADO = "UPDATE CONVOCATORIAEXAMEN SET IDE = ? WHERE IdC = ?";
+    final String CREARUNIDAD = "INSTERT INTO unidaddidactica (IdU, Acronimo, Titulo, Evaluacion, Descripcion) VALUES (?,?,?,?,?)";
+    final String CREARCONVOCATORIA = "INSERT INTO convocatoriaexamen (IdC, Convocatoria, Descripcion, Fecha, Curso, IdE) VALUES (?,?,?,?,?,?)";
     final String ENUNEX = "SELECT * FROM ConvocatoriaExamen WHERE IdE=?";
     final String ENUNIDAD = "SELECT e.* FROM Enunciado e JOIN Tiene t ON e.IdE = t.IdE WHERE t.IdU=?";
     final String LISTAR_UNIDADES = "SELECT * FROM UnidadDidactica";
     final String LISTAR_ENUNCIADOS = "SELECT * FROM Enunciado";
-
 
     private DaoImplementacionMySql() {
         try {
@@ -103,63 +103,123 @@ public final class DaoImplementacionMySql implements Dao {
         }
     }
 
+
     @Override
+	public List<ConvocatoriaExamen> listarConvocatorias() {
+             List<ConvocatoriaExamen> lista = new ArrayList<>();
+		ResultSet rs = null;
+		ConvocatoriaExamen con = null;
+                Connection conn = null;
 
-    public Enunciado obtenerRuta(int idE) {
-        ResultSet rs = null;
-        Enunciado enun = null;
 
-        try {
+		try {
+			openConnection();
+			stmt = this.con.prepareStatement(VERTODO);
+			//stmt.setInt(1, idC);
+                    
+                        rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				con = new ConvocatoriaExamen();
+				con.setConvocatoria(rs.getString("Convocatoria"));
+				con.setDescripcion(rs.getString("Descripcion"));
+				con.setCurso(rs.getString("Curso"));
+                                con.setFecha(rs.getDate("Fecha"));
+                                con.setIdE(rs.getInt("IdE"));
+                                lista.add(con);
+                                
+
+				
+			}
+		} catch (SQLException e) {
+			 e.printStackTrace();
+                         throw new RuntimeException("Error al leer datos", e);
+		}finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				closeConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return lista;
+
+	}
+
+    @Override
+    public void crearCovocatoria(ConvocatoriaExamen convo) {
+        try{
             openConnection();
-            stmt = con.prepareStatement(VERRUTA);
-            stmt.setInt(1, idE);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                enun = new Enunciado();
-                enun.setRuta(rs.getString("Ruta"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al leer datos", e);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                closeConnection();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            stmt = con.prepareStatement(CREARCONVOCATORIA);
+            
+            stmt.setInt(1, convo.getIdC());
+            stmt.setString(2, convo.getConvocatoria());
+            stmt.setString(3, convo.getDescripcion());
+            stmt.setDate(4, convo.getFecha());
+            stmt.setString(5, convo.getCurso());
+            stmt.setInt(6, convo.getIdE());
+            
+            stmt.executeUpdate();
+            
+        }catch(SQLException e){
+            
+        }finally{
+            closeConnection();
         }
-        return enun;
     }
 
     @Override
-    public void asignarEnunciadoAConvocatoria(int idE, int idC) {
+    public void crearUnidad(UnidadDidactica unid) {
+        try{
+            openConnection();
+            stmt = con.prepareStatement(CREARUNIDAD);
+            
+            stmt.setInt(1, unid.getIdU());
+            stmt.setString(2, unid.getAcronimo());
+            stmt.setString(3, unid.getTitulo());
+            stmt.setString(4, unid.getEvaluacion());
+            stmt.setString(5, unid.getDescripcion());
+            
+            stmt.executeUpdate();
+            
+        }catch(SQLException e){
+            
+        }finally{
+            closeConnection();
+        }
+    }
 
-        int filasModificadas;
-
+    @Override
+    public List<ConvocatoriaExamen> convocatoriasPorEnunciado(int idE) {
+        List<ConvocatoriaExamen> lista = new ArrayList<>();
         try {
             openConnection();
-            stmt = con.prepareStatement(ASIGNARENUNCIADO);
+            stmt = con.prepareStatement(ENUNEX);
             stmt.setInt(1, idE);
-            stmt.setInt(2, idC);
-            filasModificadas = stmt.executeUpdate();
-            if (filasModificadas > 0) {
-                System.out.println("Enunciado actualizado. ");
-            } else {
-                System.out.println("No se encontró este enunciado");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                ConvocatoriaExamen c = new ConvocatoriaExamen();
+                c.setIdC(rs.getInt("IdC"));
+                c.setConvocatoria(rs.getString("Convocatoria"));
+                c.setDescripcion(rs.getString("Descripcion"));
+                c.setCurso(rs.getString("Curso"));
+                c.setFecha(rs.getDate("Fecha"));
+                lista.add(c);
             }
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Error al leer datos", e);
         } finally {
-                closeConnection();
+            closeConnection();
         }
+        return lista;
+    }
 
+    @Override
     public List<Enunciado> enunciadoPorUnidadDidactica(int idU) {
-        List<Enunciado> lista = new ArrayList<>();
+         List<Enunciado> lista = new ArrayList<>();
 
         try {
             openConnection();
@@ -185,78 +245,6 @@ public final class DaoImplementacionMySql implements Dao {
             e.printStackTrace();
         } finally {
             closeConnection();
-        }
-        return lista;
-
-    }
-
-    @Override
-    public List<ConvocatoriaExamen> convocatoriasPorEnunciado(int idE) {
-        List<ConvocatoriaExamen> lista = new ArrayList<>();
-        try {
-            openConnection();
-            stmt = con.prepareStatement(ENUNEX);
-            stmt.setInt(1, idE);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                ConvocatoriaExamen c = new ConvocatoriaExamen();
-                c.setIdC(rs.getInt("IdC"));
-                c.setConvocatoria(rs.getString("Convocatoria"));
-                c.setDescripcion(rs.getString("Descripcion"));
-                c.setCurso(rs.getString("Curso"));
-                java.sql.Date sqlDate = rs.getDate("Fecha");
-                if (sqlDate != null) {
-                    c.setFecha(sqlDate.toLocalDate());
-                }
-                lista.add(c);
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection();
-        }
-        return lista;
-    }
-
-    @Override
-    public List<ConvocatoriaExamen> listarConvocatorias() {
-        List<ConvocatoriaExamen> lista = new ArrayList<>();
-        ResultSet rs = null;
-        ConvocatoriaExamen con = null;
-        Connection conn = null;
-
-        try {
-            openConnection();
-            stmt = this.con.prepareStatement(VERTODO);
-            //stmt.setInt(1, idC);
-
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                con = new ConvocatoriaExamen();
-                con.setConvocatoria(rs.getString("Convocatoria"));
-                con.setDescripcion(rs.getString("Descripcion"));
-                con.setCurso(rs.getString("Curso"));
-                java.sql.Date sqlDate = rs.getDate("Fecha");
-                if (sqlDate != null) {
-                    con.setFecha(sqlDate.toLocalDate());
-                }
-                lista.add(con);
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al leer datos", e);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                closeConnection();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         return lista;
 
@@ -290,7 +278,7 @@ public final class DaoImplementacionMySql implements Dao {
 
     @Override
     public List<Enunciado> listarEnunciados() {
-        List<Enunciado> lista = new ArrayList<>();
+       List<Enunciado> lista = new ArrayList<>();
         ResultSet rs = null;
         try {
             openConnection();
@@ -318,5 +306,5 @@ public final class DaoImplementacionMySql implements Dao {
         }
         return lista;
     }
-
+    
 }
