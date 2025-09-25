@@ -16,8 +16,24 @@ public class Enunciado {
     
     }
 
+    public Enunciado(int idE, String descripcion, Dificultad nivel, boolean disponible, String ruta, List<UnidadDidactica> unidades) {
+        this.idE = idE;
+        this.descripcion = descripcion;
+        this.nivel = nivel;
+        this.disponible = disponible;
+        this.ruta = ruta;
+        this.unidades = unidades;
+    }
+    
+    
+    
+    
     public Enunciado(List<UnidadDidactica> unidades) {
         this.unidades = unidades;
+    }
+
+    public Enunciado() {
+        
     }
 
     public int getIdE() {
