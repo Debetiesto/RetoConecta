@@ -6,9 +6,11 @@ import modelo.Enunciado;
 import modelo.UnidadDidactica;
 
 public interface Dao {
-    // public ConvocatoriaExamen leerConvocatoria(int idC);
 
-    //public ConvocatoriaExamen leerConvocatoria(int idC);
+    public void crearCovocatoria(ConvocatoriaExamen convo);
+        
+    public void crearUnidad(UnidadDidactica unid);
+    
     public List<ConvocatoriaExamen> listarConvocatorias();
 
     public List<ConvocatoriaExamen> convocatoriasPorEnunciado(int idE);
@@ -23,4 +25,5 @@ public interface Dao {
   
     public void asignarEnunciadoAConvocatoria(int idE, int idC);
 }
+
 
