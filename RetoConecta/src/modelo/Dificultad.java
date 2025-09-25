@@ -1,7 +1,8 @@
-package modelo;
+
+package Modelo;
 
 public enum Dificultad {
-    ALTA,
-    MEDIA,
-    BAJA;
+    Alto,
+    Medio,
+    Bajo
 }

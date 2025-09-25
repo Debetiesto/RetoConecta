@@ -10,11 +10,6 @@ public class Enunciado {
     private boolean disponible;
     private String ruta;
     private List<UnidadDidactica> unidades;
-    
-    
-    public Enunciado() {
-    
-    }
 
     public Enunciado(int idE, String descripcion, Dificultad nivel, boolean disponible, String ruta, List<UnidadDidactica> unidades) {
         this.idE = idE;
@@ -24,16 +19,14 @@ public class Enunciado {
         this.ruta = ruta;
         this.unidades = unidades;
     }
-    
-    
-    
+
     
     public Enunciado(List<UnidadDidactica> unidades) {
         this.unidades = unidades;
     }
 
     public Enunciado() {
-        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public int getIdE() {
