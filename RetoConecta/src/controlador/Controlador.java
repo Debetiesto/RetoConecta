@@ -37,9 +37,12 @@ public class Controlador {
                     consultarConvocatoriasPorEnunciado();
                     break;
                 case 6:
-                    //visualizarDocumento();
+                    visualizarDocumento();
                     break;
                 case 7:
+                     asignarEnunciadoAConvocatoria();
+                break;
+                case 8:
                     System.out.println("Saliendo...");
                     break;
                 default:
@@ -136,40 +139,47 @@ public class Controlador {
         }
         }
     }
-
-    public void visualizarDocumento() {
-        System.out.println("Funcionalidad para visualizar documento (pendiente).");
-    }
-
+    
     public List<ConvocatoriaExamen> listarConvocatorias() {
         return dao.listarConvocatorias();
     }
+    
+    public static void visualizarDocumento() {
+        int idE = Utilidades.leerInt("Introduce el ID del enunciado que quieres visualizar:");
+        Enunciado enun = dao.obtenerRuta(idE);
 
+        if (enun != null && enun.getRuta() != null) {
+            System.out.println("Ruta del documento: " + enun.getRuta());
 
-    int idE = Utilidades.leerInt("Introduce el ID del enunciado:");
-    int idC = Utilidades.leerInt("Introduce el ID de la convocatoria:");
+            try {
+                File archivo = new File(enun.getRuta());
+                if (archivo.exists()) {
+                    Desktop.getDesktop().open(archivo);
+                } else {
+                    System.out.println("El archivo no existe en la ruta especificada.");
+                }
+            } catch (IOException e) {
+                System.out.println("Error al abrir el documento: " + e.getMessage());
+            }
+        } else {
+            System.out.println("No se encontró el enunciado o no tiene documento asociado.");
+        }
+    }
 
-    dao.asignarEnunciadoAConvocatoria(idE, idC);   }
-  
     public static Enunciado obtenerRuta() {
         int idEnn;
 
         idEnn = Utilidades.leerInt("Introduce el id");
 
         return dao.obtenerRuta(idEnn);
-
-    private void crearUnidad() {
-        UnidadDidactica uni = new UnidadDidactica();
-        uni.setDatos();
-        dao.crearUnidad(uni);
-
     }
+    
+    private static void asignarEnunciadoAConvocatoria() {
+    System.out.println("Asignar un enunciado a una convocatoria existente:");
 
+    int idE = Utilidades.leerInt("Introduce el ID del enunciado:");
+    int idC = Utilidades.leerInt("Introduce el ID de la convocatoria:");
 
-
-    private void crearConvocatoria() {
-        ConvocatoriaExamen con = new ConvocatoriaExamen();
-        con.setDatos();
-        dao.crearCovocatoria(con);
-    }
+    dao.asignarEnunciadoAConvocatoria(idE, idC);   }
 }
+
