@@ -59,6 +59,18 @@ public class Controlador {
         System.out.println("7. Salir");
     }
 
+    private void crearUnidad() {
+        UnidadDidactica uni = new UnidadDidactica();
+        uni.setDatos();
+        dao.crearUnidad(uni);
+    }
+
+    private void crearConvocatoria() {
+        ConvocatoriaExamen con = new ConvocatoriaExamen();
+        con.setDatos();
+        dao.crearCovocatoria(con);
+    }
+    
     public void consultarEnunciadosPorUnidadDidactica() {
         List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
         boolean existe = true;
@@ -133,11 +145,27 @@ public class Controlador {
         return dao.listarConvocatorias();
     }
 
+
+    int idE = Utilidades.leerInt("Introduce el ID del enunciado:");
+    int idC = Utilidades.leerInt("Introduce el ID de la convocatoria:");
+
+    dao.asignarEnunciadoAConvocatoria(idE, idC);   }
+  
+    public static Enunciado obtenerRuta() {
+        int idEnn;
+
+        idEnn = Utilidades.leerInt("Introduce el id");
+
+        return dao.obtenerRuta(idEnn);
+
     private void crearUnidad() {
         UnidadDidactica uni = new UnidadDidactica();
         uni.setDatos();
         dao.crearUnidad(uni);
+
     }
+
+
 
     private void crearConvocatoria() {
         ConvocatoriaExamen con = new ConvocatoriaExamen();
