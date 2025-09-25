@@ -29,10 +29,10 @@ public class Controlador {
             opcion = Utilidades.leerInt(1, 7, "Elige opción: ");
             switch (opcion) {
                 case 1:
-                    //crearUnidad();
+                    crearUnidad();
                     break;
                 case 2:
-                    //crearConvocatoria();
+                    crearConvocatoria();
                     break;
                 case 3:
                     //crearEnunciado();
@@ -70,6 +70,18 @@ public class Controlador {
         System.out.println("8. Salir");
     }
 
+    private void crearUnidad() {
+        UnidadDidactica uni = new UnidadDidactica();
+        uni.setDatos();
+        dao.crearUnidad(uni);
+    }
+
+    private void crearConvocatoria() {
+        ConvocatoriaExamen con = new ConvocatoriaExamen();
+        con.setDatos();
+        dao.crearCovocatoria(con);
+    }
+    
     public void consultarEnunciadosPorUnidadDidactica() {
         List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
         boolean existe = true;
@@ -170,7 +182,6 @@ public class Controlador {
 
     dao.asignarEnunciadoAConvocatoria(idE, idC);   }
   
-  
     public static Enunciado obtenerRuta() {
         int idEnn;
 
@@ -180,4 +191,5 @@ public class Controlador {
     }
   
 }
+
 
