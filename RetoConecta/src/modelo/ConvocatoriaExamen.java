@@ -8,10 +8,9 @@ public class ConvocatoriaExamen {
     private int idC;
     private String convocatoria;
     private String descripcion;
-    private LocalDate fecha;
+    private Date fecha;
     private String curso;
-    private String ruta;
-    private Enunciado enunciado;  
+    private int IdE;  
 
     
     public int getIdC() {
@@ -38,11 +37,11 @@ public class ConvocatoriaExamen {
         this.descripcion = descripcion;
     }
 
-    public LocalDate getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
@@ -54,21 +53,25 @@ public class ConvocatoriaExamen {
         this.curso = curso;
     }
 
-    public String getRuta() {
-        return ruta;
+    public int getIdE() {
+        return IdE;
     }
 
-    public void setRuta(String ruta) {
-        this.ruta = ruta;
+    public void setIdE(int IdE) {
+        this.IdE = IdE;
     }
+    public void setDatos(){
+        
+        this.idC = utilidades.Utilidades.leerInt("introduce el ID de la convocatoria");
+        this.convocatoria = utilidades.Utilidades.introducirCadena("introduce la convocatoria");
+        this.fecha = Date.valueOf(utilidades.Utilidades.introducirCadena("Introducir fecha"));
+        this.descripcion = utilidades.Utilidades.introducirCadena("introduce la descripcion");
+        this.curso = utilidades.Utilidades.introducirCadena("introducir curso");
+        this.IdE = utilidades.Utilidades.leerInt("introducir ID del enunciado correspondiente");
+    }
+   
 
-    public Enunciado getEnunciados() {
-        return enunciado;
-    }
-
-    public void setEnunciados(Enunciado enunciado) {
-        this.enunciado = enunciado;
-    }
+    
 
     
     
