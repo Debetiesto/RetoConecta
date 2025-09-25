@@ -1,7 +1,5 @@
 package controlador;
 
-
-//import static controlador.Controlador.dao;
 import java.util.List;
 import modelo.ConvocatoriaExamen;
 import modelo.Enunciado;
@@ -10,17 +8,12 @@ import modelo.UnidadDidactica;
 import utilidades.Utilidades;
 
 public class Controlador {
-    
+
+    private DaoImplementacionMySql dao;
+
     public Controlador() {
         this.dao = DaoImplementacionMySql.getInstance();
     }
-    /*
-   public static ConvocatoriaExamen leerConvocatoria(int idC) {
-        return dao.leerConvocatoria(idC);
-        
-    }
-     */
-
 
     public void iniciar() {
         int opcion;
@@ -29,10 +22,10 @@ public class Controlador {
             opcion = Utilidades.leerInt(1, 7, "Elige opción: ");
             switch (opcion) {
                 case 1:
-                    //crearUnidad();
+                    crearUnidad();
                     break;
                 case 2:
-                    //crearConvocatoria();
+                    crearConvocatoria();
                     break;
                 case 3:
                     //crearEnunciado();
@@ -44,12 +37,9 @@ public class Controlador {
                     consultarConvocatoriasPorEnunciado();
                     break;
                 case 6:
-                    visualizarDocumento();
+                    //visualizarDocumento();
                     break;
                 case 7:
-                    asignarEnunciadoAConvocatoria();
-                    break;
-                case 8:
                     System.out.println("Saliendo...");
                     break;
                 default:
@@ -66,8 +56,7 @@ public class Controlador {
         System.out.println("4. Consultar enunciados por unidad");
         System.out.println("5. Consultar convocatorias de un enunciado");
         System.out.println("6. Visualizar documento asociado a enunciado");
-        System.out.println("7. Asignar un enunciado a una convocatoria existente");
-        System.out.println("8. Salir");
+        System.out.println("7. Salir");
     }
 
     public void consultarEnunciadosPorUnidadDidactica() {
@@ -136,48 +125,23 @@ public class Controlador {
         }
     }
 
-    public static void visualizarDocumento() {
-        int idE = Utilidades.leerInt("Introduce el ID del enunciado que quieres visualizar:");
-        Enunciado enun = dao.obtenerRuta(idE);
-
-        if (enun != null && enun.getRuta() != null) {
-            System.out.println("Ruta del documento: " + enun.getRuta());
-
-            try {
-                File archivo = new File(enun.getRuta());
-                if (archivo.exists()) {
-                    Desktop.getDesktop().open(archivo);
-                } else {
-                    System.out.println("El archivo no existe en la ruta especificada.");
-                }
-            } catch (IOException e) {
-                System.out.println("Error al abrir el documento: " + e.getMessage());
-            }
-        } else {
-            System.out.println("No se encontró el enunciado o no tiene documento asociado.");
-        }
+    public void visualizarDocumento() {
+        System.out.println("Funcionalidad para visualizar documento (pendiente).");
     }
-
 
     public List<ConvocatoriaExamen> listarConvocatorias() {
         return dao.listarConvocatorias();
     }
-    private static void asignarEnunciadoAConvocatoria() {
-    System.out.println("Asignar un enunciado a una convocatoria existente:");
 
-    int idE = Utilidades.leerInt("Introduce el ID del enunciado:");
-    int idC = Utilidades.leerInt("Introduce el ID de la convocatoria:");
-
-    dao.asignarEnunciadoAConvocatoria(idE, idC);   }
-  
-  
-    public static Enunciado obtenerRuta() {
-        int idEnn;
-
-        idEnn = Utilidades.leerInt("Introduce el id");
-
-        return dao.obtenerRuta(idEnn);
+    private void crearUnidad() {
+        UnidadDidactica uni = new UnidadDidactica();
+        uni.setDatos();
+        dao.crearUnidad(uni);
     }
-  
-}
 
+    private void crearConvocatoria() {
+        ConvocatoriaExamen con = new ConvocatoriaExamen();
+        con.setDatos();
+        dao.crearCovocatoria(con);
+    }
+}
