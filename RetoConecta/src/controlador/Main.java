@@ -3,11 +3,12 @@ package controlador;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.ConvocatoriaExamen;
+import modelo.UnidadDidactica;
 
 public class Main {
     
     
-    static DaoImplementacionMySql dao = DaoImplementacionMySql.getInstance();
+    static DaoImplementacionMySQL dao = DaoImplementacionMySQL.getInstance();
     
     
     public static void main(String[] args) {
@@ -21,6 +22,7 @@ public class Main {
                 System.out.println("Descripción: " + convocatoria.getDescripcion());
                 System.out.println("Curso: " + convocatoria.getCurso());
                 System.out.println("Fecha: " + convocatoria.getFecha());
+                System.out.println("IdE: " + convocatoria.getIdE());
                
             }
         } else {
@@ -47,6 +49,22 @@ public class Main {
     public static  List<ConvocatoriaExamen> listaConvocatorias(){
      return dao.listarConvocatorias();
     }
-    
+    public void crearConvocat(){
+        ConvocatoriaExamen co = new ConvocatoriaExamen();
+        co.setDatos();
+        crearCovocatoria(co);
+    }
+    public static void crearCovocatoria(ConvocatoriaExamen convo){
+        
+    }
+    public void crearUnidadDidactica(){
+        UnidadDidactica uni = new UnidadDidactica();
+        uni.setDatos();
+        crearUnidad(uni);
+    }
+    public static void crearUnidad(UnidadDidactica unid){
+        
+    }
 
+    
 }
