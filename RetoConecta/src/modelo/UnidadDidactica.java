@@ -3,15 +3,20 @@ package modelo;
 import java.util.List;
 
 public class UnidadDidactica {
+
     private int idU;
     private String acronimo;
     private String titulo;
     private String evaluacion;
     private String descripcion;
-    private List<Enunciado> enunciados;    
+    private List<Enunciado> enunciados;
 
     public UnidadDidactica(List<Enunciado> enunciados) {
         this.enunciados = enunciados;
+    }
+
+    public UnidadDidactica() {
+
     }
 
     public int getIdU() {
@@ -61,7 +66,5 @@ public class UnidadDidactica {
     public void setEnunciados(List<Enunciado> enunciados) {
         this.enunciados = enunciados;
     }
-    
-    
-    
+
 }
