@@ -1,9 +1,8 @@
 package controlador;
 
-import java.util.ArrayList;
-import java.util.List;
 import modelo.ConvocatoriaExamen;
 import modelo.Enunciado;
+
 import modelo.UnidadDidactica;
 
 public interface Dao {
@@ -19,4 +18,9 @@ public interface Dao {
     public List<UnidadDidactica> listarUnidadesDidacticas();
 
     public List<Enunciado> listarEnunciados();
+  
+    public Enunciado obtenerRuta(int IdE);
+  
+    public void asignarEnunciadoAConvocatoria(int idE, int idC);
 }
+

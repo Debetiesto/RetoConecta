@@ -10,6 +10,11 @@ public class Enunciado {
     private boolean disponible;
     private String ruta;
     private List<UnidadDidactica> unidades;
+    
+    
+    public Enunciado() {
+    
+    }
 
     public Enunciado(int idE, String descripcion, Dificultad nivel, boolean disponible, String ruta, List<UnidadDidactica> unidades) {
         this.idE = idE;

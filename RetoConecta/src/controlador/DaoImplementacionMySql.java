@@ -5,11 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modelo.ConvocatoriaExamen;
 import modelo.Dificultad;
@@ -19,19 +15,23 @@ import modelo.UnidadDidactica;
 public final class DaoImplementacionMySql implements Dao {
 
     private static DaoImplementacionMySql instance;
-    // Atributo para conexion
 
+    // Atributo para conexion
     private ResourceBundle configFile;
     private String urlBD, userBD, passwordBD;
     // Atributos
     private Connection con;
     private PreparedStatement stmt;
+
     // Sentencias SQL
     final String VERTODO = "SELECT * FROM CONVOCATORIAEXAMEN";
+    final String VERRUTA = "SELECT RUTA FROM ENUNCIADO WHERE IDE = ?";
+    final String ASIGNARENUNCIADO = "UPDATE CONVOCATORIAEXAMEN SET IDE = ? WHERE IdC = ?";
     final String ENUNEX = "SELECT * FROM ConvocatoriaExamen WHERE IdE=?";
     final String ENUNIDAD = "SELECT e.* FROM Enunciado e JOIN Tiene t ON e.IdE = t.IdE WHERE t.IdU=?";
     final String LISTAR_UNIDADES = "SELECT * FROM UnidadDidactica";
     final String LISTAR_ENUNCIADOS = "SELECT * FROM Enunciado";
+
 
     private DaoImplementacionMySql() {
         try {
@@ -104,6 +104,60 @@ public final class DaoImplementacionMySql implements Dao {
     }
 
     @Override
+
+    public Enunciado obtenerRuta(int idE) {
+        ResultSet rs = null;
+        Enunciado enun = null;
+
+        try {
+            openConnection();
+            stmt = con.prepareStatement(VERRUTA);
+            stmt.setInt(1, idE);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                enun = new Enunciado();
+                enun.setRuta(rs.getString("Ruta"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al leer datos", e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                closeConnection();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return enun;
+    }
+
+    @Override
+    public void asignarEnunciadoAConvocatoria(int idE, int idC) {
+
+        int filasModificadas;
+
+        try {
+            openConnection();
+            stmt = con.prepareStatement(ASIGNARENUNCIADO);
+            stmt.setInt(1, idE);
+            stmt.setInt(2, idC);
+            filasModificadas = stmt.executeUpdate();
+            if (filasModificadas > 0) {
+                System.out.println("Enunciado actualizado. ");
+            } else {
+                System.out.println("No se encontró este enunciado");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al leer datos", e);
+        } finally {
+                closeConnection();
+        }
+
     public List<Enunciado> enunciadoPorUnidadDidactica(int idU) {
         List<Enunciado> lista = new ArrayList<>();
 
