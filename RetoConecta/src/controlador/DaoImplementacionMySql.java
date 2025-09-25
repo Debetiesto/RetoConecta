@@ -5,28 +5,25 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import modelo.ConvocatoriaExamen;
 import modelo.Enunciado;
 
 public final class DaoImplementacionMySql implements Dao {
 
     private static DaoImplementacionMySql instance;
-    // Atributo para conexion
 
+    // Atributo para conexion
     private ResourceBundle configFile;
     private String urlBD, userBD, passwordBD;
     // Atributos
     private Connection con;
     private PreparedStatement stmt;
+
     // Sentencias SQL
     final String VERTODO = "SELECT * FROM CONVOCATORIAEXAMEN";
-
+    final String VERRUTA = "SELECT RUTA FROM ENUNCIADO WHERE IDE = ?";
+    final String ASIGNARENUNCIADO = "UPDATE CONVOCATORIAEXAMEN SET IDE = ? WHERE IdC = ?";
 
     private DaoImplementacionMySql() {
         try {
@@ -98,57 +95,59 @@ public final class DaoImplementacionMySql implements Dao {
         }
     }
 
-
-    /**
-     * 
-     * @param El método listarConvocatorias es de prueba, borrar al final. 
-     */
     @Override
-	public List<ConvocatoriaExamen> listarConvocatorias() {
-             List<ConvocatoriaExamen> lista = new ArrayList<>();
-		ResultSet rs = null;
-		ConvocatoriaExamen con = null;
-                Connection conn = null;
+    public Enunciado obtenerRuta(int idE) {
+        ResultSet rs = null;
+        Enunciado enun = null;
 
+        try {
+            openConnection();
+            stmt = con.prepareStatement(VERRUTA);
+            stmt.setInt(1, idE);
+            rs = stmt.executeQuery();
 
-		try {
-			openConnection();
-			stmt = this.con.prepareStatement(VERTODO);
-			//stmt.setInt(1, idC);
-                    
-                        rs = stmt.executeQuery();
+            if (rs.next()) {
+                enun = new Enunciado();
+                enun.setRuta(rs.getString("Ruta"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al leer datos", e);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                closeConnection();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return enun;
+    }
 
-			while (rs.next()) {
-				con = new ConvocatoriaExamen();
-				con.setConvocatoria(rs.getString("Convocatoria"));
-				con.setDescripcion(rs.getString("Descripcion"));
-				 con.setCurso(rs.getString("Curso"));
-                                    java.sql.Date sqlDate = rs.getDate("Fecha");
-                                if (sqlDate != null) {
-                                 con.setFecha(sqlDate.toLocalDate());
-                                    }
-                                lista.add(con);
-                                
+    @Override
+    public void asignarEnunciadoAConvocatoria(int idE, int idC) {
 
-				
-			}
-		} catch (SQLException e) {
-			 e.printStackTrace();
-                         throw new RuntimeException("Error al leer datos", e);
-		}finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				closeConnection();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return lista;
+        int filasModificadas;
 
-	}
-
-
+        try {
+            openConnection();
+            stmt = con.prepareStatement(ASIGNARENUNCIADO);
+            stmt.setInt(1, idE);
+            stmt.setInt(2, idC);
+            filasModificadas = stmt.executeUpdate();
+            if (filasModificadas > 0) {
+                System.out.println("Enunciado actualizado. ");
+            } else {
+                System.out.println("No se encontró este enunciado");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al leer datos", e);
+        } finally {
+                closeConnection();
+        }
+    }
 
 }
