@@ -1,5 +1,6 @@
 package utilidades;
 
+import excepciones.ValidacionException;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
@@ -15,8 +16,37 @@ import java.util.Scanner;
 
 public class Utilidades {
 
+    public static Scanner scanner = new Scanner(System.in);
+
+    /* public static String introducirCadena(String mensaje) {
+        System.out.print(mensaje + ": ");
+        String cadena = "";
+        try {
+            cadena = scanner.nextLine(); // 👈 ahora sí, lee la línea completa
+        } catch (NoSuchElementException er) {
+            System.out.println("Error al introducir datos");
+            System.exit(0);
+        }
+        return cadena;
+    }*/
+    public static String introducirCadena(String mensaje) throws ValidacionException {
+        System.out.print(mensaje + ": ");
+        String cadena = "";
+        try {
+            cadena = scanner.nextLine();
+        } catch (NoSuchElementException er) {
+            throw new ValidacionException("Error al leer datos de la entrada.");
+        }
+
+        if (cadena == null || cadena.trim().isEmpty()) {
+            throw new ValidacionException("El valor introducido no puede estar vacío.");
+        }
+
+        return cadena.trim();
+    }
+
     //Utilidad para leer cadenas
-    public static String introducirCadena(String mensaje) {
+    /*public static String introducirCadena(String mensaje) {
         Scanner sc = new Scanner(System.in);
 
         String cadena = "";
@@ -30,10 +60,9 @@ public class Utilidades {
         }
         //sc.close();
         return cadena;
-    }
-
+    }*/
     //Utilidad para leer un real
-    public static float leerFloat(String message) {
+    public static float leerFloat(String message) throws ValidacionException {
         float n = 0;
         boolean ok;
 
@@ -51,7 +80,7 @@ public class Utilidades {
     }
 
     //Utilidad para leer un entero
-    public static int leerInt(String message) {
+    public static int leerInt(String message) throws ValidacionException {
         int n = -1;
         boolean ok;
 
@@ -69,7 +98,7 @@ public class Utilidades {
     }
     //Leer un string
 
-    public static String leerString(int x, String message) {
+    public static String leerString(int x, String message) throws ValidacionException {
         String cadena = null;
         boolean ok;
         do {
@@ -84,7 +113,7 @@ public class Utilidades {
     }
     //Leer una respuesta
 
-    public static boolean leerRespuesta(String message) {
+    public static boolean leerRespuesta(String message) throws ValidacionException {
         String respu;
         do {
             respu = introducirCadena(message).toLowerCase();
@@ -97,7 +126,7 @@ public class Utilidades {
     }
     //leer int entre un rango
 
-    public static int leerInt(int x, int y, String message) {
+    public static int leerInt(int x, int y, String message) throws ValidacionException {
         int num = 0;
         boolean ok;
         do {
@@ -120,7 +149,7 @@ public class Utilidades {
     }
     //leer float entre un rango
 
-    public static float leerFloat(float x, float y, String message) {
+    public static float leerFloat(float x, float y, String message) throws ValidacionException {
         float fNumero = 0;
         boolean ok;
         do {
@@ -141,7 +170,7 @@ public class Utilidades {
     }
     //leer caracter
 
-    public static char leerChar(String message) {
+    public static char leerChar(String message) throws ValidacionException {
         boolean error = false;
         String letra;
 
@@ -158,7 +187,7 @@ public class Utilidades {
     }
     //Pido fecha
 
-    public static LocalDate pidoFechaDMA(String message) {
+    public static LocalDate pidoFechaDMA(String message) throws ValidacionException {
         String fechaS;
         boolean hay;
         LocalDate fecha = null;
@@ -177,7 +206,7 @@ public class Utilidades {
         return fecha;
     }
 
-    public static char leerCharArray(char caracteres[], String message) {
+    public static char leerCharArray(char caracteres[], String message) throws ValidacionException {
         int i;
         boolean error = false;
         String letra;
