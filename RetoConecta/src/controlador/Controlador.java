@@ -75,60 +75,60 @@ public class Controlador {
     }
 
     private void crearUnidad() throws ValidacionException {
-        UnidadDidactica uni = new UnidadDidactica();
-        uni.setDatos();
-        int idUnidad;
+    UnidadDidactica uni = new UnidadDidactica();
+    uni.setDatos();
+    int idUnidad;
 
-        idUnidad = dao.crearUnidad(uni);
-        if (idUnidad == -1) {
-            System.out.println("Error al crear unidad.");
+    idUnidad = dao.crearUnidad(uni);
+    if (idUnidad == -1) {
+        System.out.println("Error al crear unidad.");
 
-        } else {
+    } else {
+        System.out.println("Unidad creada con IdU: " + idUnidad);
 
-            System.out.println("Unidad creada con IdU: " + idUnidad);
+        String resp = utilidades.Utilidades.introducirCadena("¿Quieres asignar enunciados a esta unidad? (s/n): ");
+        if (resp.equalsIgnoreCase("s")) {
 
-            String resp = utilidades.Utilidades.introducirCadena("¿Quieres asignar enunciados a esta unidad? (s/n): ");
-            if (resp.equalsIgnoreCase("s")) {
+            List<Enunciado> enunciados = dao.listarEnunciados();
+            if (enunciados.isEmpty()) {
+                System.out.println("No hay enunciados disponibles.");
 
-                List<Enunciado> enunciados = dao.listarEnunciados();
-                if (enunciados.isEmpty()) {
-                    System.out.println("No hay enunciados disponibles.");
-
-                } else {
-
-                    System.out.println("Enunciados disponibles:");
-
-                    for (int i = 0; i < enunciados.size(); i++) {
-                        Enunciado e = enunciados.get(i);
-                        System.out.println(e.getIdE() + " - " + e.getDescripcion());
-                    }
-
-                    boolean seguir = true;
-                    while (seguir) {
-                        int idE = utilidades.Utilidades.leerInt("Introduce el ID del enunciado a asignar: ");
-
-                        boolean encontrado = false;
-                        for (int i = 0; i < enunciados.size(); i++) {
-                            if (enunciados.get(i).getIdE() == idE) {
-                                encontrado = true;
-                            }
-                        }
-
-                        if (!encontrado) {
-                            System.out.println("❌ ID inválido, inténtalo de nuevo.");
-                            throw new ValidacionException("El enunciado con ID " + idE + " no existe.");
-                        }
-
-                        seguir = utilidades.Utilidades.leerRespuesta("¿Quieres asignar otro enunciado? (s/n): ");
-                    }
-                }
-            } else if (resp.equalsIgnoreCase("n")) {
-                System.out.println("No se asignaron enunciados a esta unidad.");
             } else {
-                throw new ValidacionException("Respuesta inválida. Solo se admite 's' o 'n'.");
+                System.out.println("Enunciados disponibles:");
+                for (int i = 0; i < enunciados.size(); i++) {
+                    Enunciado e = enunciados.get(i);
+                    System.out.println(e.getIdE() + " - " + e.getDescripcion());
+                }
+
+                boolean seguir = true;
+                while (seguir) {
+                    int idE = utilidades.Utilidades.leerInt("Introduce el ID del enunciado a asignar: ");
+
+                    boolean encontrado = false;
+                    for (int i = 0; i < enunciados.size(); i++) {
+                        if (enunciados.get(i).getIdE() == idE) {
+                            encontrado = true;
+                        }
+                    }
+
+                    if (!encontrado) {
+                        System.out.println("❌ ID inválido, inténtalo de nuevo.");
+                        throw new ValidacionException("El enunciado con ID " + idE + " no existe.");
+                    }
+
+                    dao.asignarEnunciadoAUnidad(idE, idUnidad);
+                    System.out.println("✅ Enunciado " + idE + " asignado a la unidad " + idUnidad);
+
+                    seguir = utilidades.Utilidades.leerRespuesta("¿Quieres asignar otro enunciado? (s/n): ");
+                }
             }
+        } else if (resp.equalsIgnoreCase("n")) {
+            System.out.println("No se asignaron enunciados a esta unidad.");
+        } else {
+            throw new ValidacionException("Respuesta inválida. Solo se admite 's' o 'n'.");
         }
     }
+}
 
     private void crearConvocatoria() throws ValidacionException {
         ConvocatoriaExamen con = new ConvocatoriaExamen();
@@ -458,3 +458,4 @@ public class Controlador {
     }
 
 }
+
