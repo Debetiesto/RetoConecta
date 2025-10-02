@@ -327,13 +327,50 @@ public class Controlador {
     private void crearEnunciado() throws ValidacionException {
         Enunciado e = new Enunciado();
         e.setDatos();
-
+       
         try {
             int id = dao.crearEnunciado(e);
             System.out.println("✅ Enunciado creado con IdE: " + id);
+            asignarUnidadDidactica(e);
+            asignarEnunciadoAConvocatoria();
         } catch (Exception ex) {
             System.err.println("❌ Error al crear Enunciado: " + ex.getMessage());
         }
+    }
+
+     private void asignarUnidadDidactica(Enunciado e) throws ValidacionException {
+        List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
+        UnidadDidactica u;
+
+        System.out.println("Unidades didácticas disponibles: ");
+        for (UnidadDidactica un : unidades) {
+            System.out.println(un.getIdU() + " - " + un.getDescripcion() + " (" + un.getAcronimo() + ")");
+        }
+
+        int idU = Utilidades.leerInt("Introduzca el ID de la unidad didáctica: ");
+
+        u = buscarUnidadPorId(idU);
+
+        if (u == null) {
+            System.out.println("No existe una unidad con ese ID");
+        } else {
+            System.out.println("Se ha encontrado la unidad existente: " + u.getAcronimo());
+            e.agregarUnidades(u);
+            System.out.println("✅ Unidad didáctica agregada a enunciado "+ e.getIdE() + " con éxito.");
+        }
+
+       
+    }
+     
+      private UnidadDidactica buscarUnidadPorId(int idU) {
+        List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
+        for (UnidadDidactica u : unidades) {
+            if (u.getIdU() == idU) {
+                return u;
+            }
+            return u;
+        }
+        return null;
     }
 
     private void precargarConvocatorias() {
