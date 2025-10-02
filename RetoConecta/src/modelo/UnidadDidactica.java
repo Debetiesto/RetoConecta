@@ -1,5 +1,6 @@
 package modelo;
 
+import excepciones.ValidacionException;
 import java.util.List;
 
 public class UnidadDidactica {
@@ -8,11 +9,7 @@ public class UnidadDidactica {
     private String titulo;
     private String evaluacion;
     private String descripcion;
-    private List<Enunciado> enunciados;    
-
-    public UnidadDidactica(List<Enunciado> enunciados) {
-        this.enunciados = enunciados;
-    }
+    
 
     public int getIdU() {
         return idU;
@@ -54,12 +51,14 @@ public class UnidadDidactica {
         this.descripcion = descripcion;
     }
 
-    public List<Enunciado> getEnunciados() {
-        return enunciados;
-    }
+    public void setDatos() throws ValidacionException{
+       
+      //  this.idU = utilidades.Utilidades.leerInt("introduce el ID de la unidad didactica");
 
-    public void setEnunciados(List<Enunciado> enunciados) {
-        this.enunciados = enunciados;
+        this.acronimo = utilidades.Utilidades.introducirCadena("introduce el acronimo");
+        this.titulo = utilidades.Utilidades.introducirCadena("introduce el titulo");
+        this.evaluacion = utilidades.Utilidades.introducirCadena("Introduce la evaluacion");
+        this.descripcion = utilidades.Utilidades.introducirCadena("Introduce la descripcion");
     }
     
     
