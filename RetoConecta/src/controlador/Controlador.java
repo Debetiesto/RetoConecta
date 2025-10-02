@@ -60,7 +60,6 @@ public class Controlador {
                 System.out.println("❌ Error de validación: " + ex.getMessage());
             }
         } while (opcion != 8);
-
     }
 
     private void mostrarMenu() {
@@ -131,15 +130,13 @@ public class Controlador {
         }
     }
 
-
     private void crearConvocatoria() throws ValidacionException {
         ConvocatoriaExamen con = new ConvocatoriaExamen();
         con.setDatos();
         dao.crearConvocatoria(con);
     }
-    
-public void consultarEnunciadosPorUnidadDidactica() throws ValidacionException {
 
+    public void consultarEnunciadosPorUnidadDidactica() throws ValidacionException {
         List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
         boolean existe = true;
         if (unidades.isEmpty()) {
@@ -330,58 +327,97 @@ public void consultarEnunciadosPorUnidadDidactica() throws ValidacionException {
     private void crearEnunciado() throws ValidacionException {
         Enunciado e = new Enunciado();
         e.setDatos();
-       
+
         try {
-            int id = dao.crearEnunciado(e);
-            System.out.println("✅ Enunciado creado con IdE: " + id);
-            asignarUnidadDidactica(e);
-            asignarEnunciadoAConvocatoria();
+            int idGenerado = dao.crearEnunciado(e);
+            if (idGenerado > 0) {
+                e.setIdE(idGenerado);
+                System.out.println("✅ Enunciado creado con IdE: " + e.getIdE());
+
+                String respUnidad = Utilidades.introducirCadena("¿Asignar a una unidad didáctica? (s/n): ");
+                if (respUnidad.equalsIgnoreCase("s")) {
+                    asignarUnidadDidactica(e);
+                }
+
+                String respConv = Utilidades.introducirCadena("¿Asociar a una convocatoria existente? (s/n): ");
+                if (respConv.equalsIgnoreCase("s")) {
+                    asociarConvocatoriaAEnunciado(e);
+                }
+
+            } else {
+                System.err.println("❌ Error: No se pudo crear el Enunciado en la base de datos.");
+            }
         } catch (Exception ex) {
-            System.err.println("❌ Error al crear Enunciado: " + ex.getMessage());
+            System.err.println("❌ Error al procesar la creación del Enunciado: " + ex.getMessage());
         }
     }
-    
-    public List<ConvocatoriaExamen> listarConvocatorias() {
-        return dao.listarConvocatorias();
-    }
-    
-    public static void visualizarDocumento() {
-        int idE = Utilidades.leerInt("Introduce el ID del enunciado que quieres visualizar:");
-        Enunciado enun = dao.obtenerRuta(idE);
 
-        if (enun != null && enun.getRuta() != null) {
-            System.out.println("Ruta del documento: " + enun.getRuta());
-
-     private void asignarUnidadDidactica(Enunciado e) throws ValidacionException {
-        List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
-        UnidadDidactica u;
-
-        System.out.println("Unidades didácticas disponibles: ");
-        for (UnidadDidactica un : unidades) {
-            System.out.println(un.getIdU() + " - " + un.getDescripcion() + " (" + un.getAcronimo() + ")");
-        }
-
-        int idU = Utilidades.leerInt("Introduzca el ID de la unidad didáctica: ");
-
-        u = buscarUnidadPorId(idU);
-
-        if (u == null) {
-            System.out.println("No existe una unidad con ese ID");
+    private void asociarConvocatoriaAEnunciado(Enunciado enun) throws ValidacionException {
+        List<ConvocatoriaExamen> convocatorias = dao.listarConvocatorias();
+        if (convocatorias.isEmpty()) {
+            System.out.println("⚠️ No hay convocatorias disponibles para asociar.");
         } else {
-            System.out.println("Se ha encontrado la unidad existente: " + u.getAcronimo());
-            e.agregarUnidades(u);
-            System.out.println("✅ Unidad didáctica agregada a enunciado "+ e.getIdE() + " con éxito.");
-        }
+            System.out.println("\nConvocatorias disponibles:");
+            for (ConvocatoriaExamen c : convocatorias) {
+                System.out.println(c.getIdC() + " - " + c.getConvocatoria() + " (" + c.getCurso() + ")");
+            }
 
+            int idC = Utilidades.leerInt("Introduce el ID de la convocatoria a la que pertenece: ");
+
+            boolean encontrada = false;
+
+            for (int i = 0; i < convocatorias.size(); i++) {
+                ConvocatoriaExamen c = convocatorias.get(i);
+                if (c.getIdC() == idC && !encontrada) {
+                    c.setIdE(enun.getIdE());
+                    encontrada = true;
+                }
+            }
+
+            if (encontrada) {
+                dao.guardarConvocatorias(convocatorias);
+                System.out.println("✅ Enunciado " + enun.getIdE() + " asociado a la convocatoria " + idC + " con éxito.");
+            } else {
+                throw new ValidacionException("La convocatoria con ID " + idC + " no existe.");
+            }
+        }
     }
-     
-      private UnidadDidactica buscarUnidadPorId(int idU) {
+
+    private void asignarUnidadDidactica(Enunciado e) throws ValidacionException {
         List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
-        for (UnidadDidactica u : unidades) {
+
+        if (unidades == null || unidades.isEmpty()) {
+            System.out.println("⚠️ No hay unidades didácticas disponibles para asignar.");
+        } else {
+            System.out.println("Unidades didácticas disponibles: ");
+            for (UnidadDidactica un : unidades) {
+                System.out.println(un.getIdU() + " - " + un.getTitulo() + " (" + un.getAcronimo() + ")");
+            }
+
+            int idU = Utilidades.leerInt("Introduzca el ID de la unidad didáctica: ");
+            UnidadDidactica u = buscarUnidadPorId(idU);
+
+            if (u == null) {
+                System.out.println("❌ No existe una unidad con ese ID.");
+            } else {
+                System.out.println("Se ha encontrado la unidad existente: " + u.getAcronimo());
+
+                dao.asignarEnunciadoAUnidad(e.getIdE(), u.getIdU());
+
+                e.agregarUnidades(u);
+                System.out.println("✅ Unidad didáctica '" + u.getTitulo() + "' asignada al enunciado " + e.getIdE() + " con éxito.");
+            }
+        }
+    }
+
+    private UnidadDidactica buscarUnidadPorId(int idU) {
+        List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
+
+        for (int i = 0; i < unidades.size(); i++) {
+            UnidadDidactica u = unidades.get(i);
             if (u.getIdU() == idU) {
                 return u;
             }
-            return u;
         }
         return null;
     }
@@ -413,7 +449,6 @@ public void consultarEnunciadosPorUnidadDidactica() throws ValidacionException {
             c3.setFecha(java.sql.Date.valueOf("2025-07-10"));
             c3.setIdE(3);
 
-
             dao.crearConvocatoria(c1);
             dao.crearConvocatoria(c2);
             dao.crearConvocatoria(c3);
@@ -422,14 +457,4 @@ public void consultarEnunciadosPorUnidadDidactica() throws ValidacionException {
         }
     }
 
-
-    public static Enunciado obtenerRuta() {
-        int idEnn;
-
-        idEnn = Utilidades.leerInt("Introduce el id");
-
-        return dao.obtenerRuta(idEnn);
-    }
-    
 }
-

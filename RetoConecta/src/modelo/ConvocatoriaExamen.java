@@ -69,28 +69,28 @@ public class ConvocatoriaExamen implements Serializable {
         this.convocatoria = utilidades.Utilidades.introducirCadena("introduce la convocatoria");
         this.descripcion = utilidades.Utilidades.introducirCadena("introduce la descripcion");
         try {
-        String fechaInput = Utilidades.introducirCadena("Introduce la fecha (YYYY-MM-DD): ");
-        LocalDate fechaLocal = LocalDate.parse(fechaInput);
+            String fechaInput = Utilidades.introducirCadena("Introduce la fecha (YYYY-MM-DD): ");
+            LocalDate fechaLocal = LocalDate.parse(fechaInput);
 
-        LocalDate hoy = LocalDate.now();
-        LocalDate limiteFutura = hoy.plusYears(30);
+            LocalDate hoy = LocalDate.now();
+            LocalDate limiteFutura = hoy.plusYears(30);
 
-        if (fechaLocal.isBefore(hoy)) {
-            throw new ValidacionException("La fecha no puede ser anterior a hoy.");
+            if (fechaLocal.isBefore(hoy)) {
+                throw new ValidacionException("La fecha no puede ser anterior a hoy.");
+            }
+            if (fechaLocal.isAfter(limiteFutura)) {
+                throw new ValidacionException("La fecha es muy lejana en el tiempo.");
+            }
+
+            this.fecha = Date.valueOf(fechaLocal);
+
+        } catch (IllegalArgumentException e) {
+            throw new ValidacionException("Formato de fecha inválido. Usa YYYY-MM-DD.");
         }
-        if (fechaLocal.isAfter(limiteFutura)) {
-            throw new ValidacionException("La fecha es muy lejana en el tiempo.");
+
+        this.curso = Utilidades.introducirCadena("Introduce el curso (YYYY-YYYY): ");
+        if (!this.curso.matches("\\d{4}-\\d{4}")) {
+            throw new ValidacionException("Formato de curso inválido. Debe ser YYYY-YYYY.");
         }
-
-        this.fecha = Date.valueOf(fechaLocal);
-
-    } catch (IllegalArgumentException e) {
-        throw new ValidacionException("Formato de fecha inválido. Usa YYYY-MM-DD.");
     }
-
-    this.curso = Utilidades.introducirCadena("Introduce el curso (YYYY-YYYY): ");
-    if (!this.curso.matches("\\d{4}-\\d{4}")) {
-        throw new ValidacionException("Formato de curso inválido. Debe ser YYYY-YYYY.");
-    }
-}
 }

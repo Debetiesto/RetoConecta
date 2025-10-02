@@ -250,29 +250,6 @@ public final class DaoImplementacionMySql implements Dao {
         return resultado;
     }
 
-    @Override
-    public List<Enunciado> enunciadoPorUnidadDidactica(int idU) {
-        List<Enunciado> lista = new ArrayList<>();
-
-        try {
-
-            openConnection();
-            stmt = con.prepareStatement(CREARUNIDAD);
-            
-            stmt.setInt(1, unid.getIdU());
-            stmt.setString(2, unid.getAcronimo());
-            stmt.setString(3, unid.getTitulo());
-            stmt.setString(4, unid.getEvaluacion());
-            stmt.setString(5, unid.getDescripcion());
-            
-            stmt.executeUpdate();
-            
-        }catch(SQLException e){
-            
-        }finally{
-            closeConnection();
-        }
-    }
 
     @Override
     public List<UnidadDidactica> listarUnidadesDidacticas() {
@@ -327,21 +304,6 @@ public final class DaoImplementacionMySql implements Dao {
     }
 
     @Override
-
-    public Enunciado obtenerRuta(int idE) {
-        ResultSet rs = null;
-        Enunciado enun = null;
-
-        try {
-            openConnection();
-            stmt = con.prepareStatement(VERRUTA);
-            stmt.setInt(1, idE);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                enun = new Enunciado();
-                enun.setRuta(rs.getString("Ruta"));
-
     public List<Enunciado> enunciadoPorUnidadDidactica(int idU) {
          List<Enunciado> lista = new ArrayList<>();
 
@@ -366,37 +328,15 @@ public final class DaoImplementacionMySql implements Dao {
 
             }
             rs.close();
+            return lista;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closeConnection();
         }
-        return enun;
+        return lista;
     }
 
-    @Override
-    public void asignarEnunciadoAConvocatoria(int idE, int idC) {
-
-        int filasModificadas;
-
-        try {
-            openConnection();
-            stmt = con.prepareStatement(ASIGNARENUNCIADO);
-            stmt.setInt(1, idE);
-            stmt.setInt(2, idC);
-            filasModificadas = stmt.executeUpdate();
-            if (filasModificadas > 0) {
-                System.out.println("Enunciado actualizado. ");
-            } else {
-                System.out.println("No se encontró este enunciado");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al leer datos", e);
-        } finally {
-            closeConnection();
-        }
-    }
 
     @Override
     public int crearEnunciado(Enunciado enun) {
@@ -488,4 +428,5 @@ public final class DaoImplementacionMySql implements Dao {
                 closeConnection();
         }
 }
+    }
 

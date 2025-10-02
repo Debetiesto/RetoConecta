@@ -19,10 +19,7 @@ public interface Dao {
        // public ConvocatoriaExamen leerConvocatoria(int idC);
         
         //public ConvocatoriaExamen leerConvocatoria(int idC);
-        public  List<ConvocatoriaExamen> listarConvocatorias();
 
-        
-        public void crearUnidad(UnidadDidactica unid);
         
 
 
