@@ -1,6 +1,7 @@
 package modelo;
 
 import excepciones.ValidacionException;
+import java.util.ArrayList;
 import java.util.List;
 import utilidades.Utilidades;
 
@@ -18,7 +19,7 @@ public class Enunciado {
     }
 
     public Enunciado() {
-
+        unidades = new ArrayList<>();
     }
 
     public int getIdE() {
@@ -83,6 +84,10 @@ public class Enunciado {
         this.disponible = Utilidades.leerRespuesta("¿Está disponible? (s/n): ");
 
         this.ruta = Utilidades.introducirCadena("Introduce la ruta del documento (ej: docs/enunciado1.pdf): ");
+    }
+    
+        public void agregarUnidades(UnidadDidactica u) {
+        unidades.add(u);
     }
 
 }
