@@ -16,6 +16,7 @@ public class ConvocatoriaExamen implements Serializable {
     private String curso;
     private int IdE;
 
+
     public int getIdC() {
         return idC;
     }
@@ -88,9 +89,6 @@ public class ConvocatoriaExamen implements Serializable {
         throw new ValidacionException("Formato de fecha inválido. Usa YYYY-MM-DD.");
     }
 
-    this.curso = Utilidades.introducirCadena("Introduce el curso (YYYY-YYYY): ");
-    if (!this.curso.matches("\\d{4}-\\d{4}")) {
-        throw new ValidacionException("Formato de curso inválido. Debe ser YYYY-YYYY.");
-    }
+
 }
 }

@@ -1,4 +1,5 @@
 
+
 package modelo;
 
 public enum Dificultad {
@@ -28,4 +29,5 @@ public enum Dificultad {
 		throw new IllegalArgumentException("Nivel no válido: " + nombre);
 
 	}
+
 }

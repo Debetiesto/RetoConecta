@@ -60,6 +60,7 @@ public class Controlador {
                 System.out.println("❌ Error de validación: " + ex.getMessage());
             }
         } while (opcion != 8);
+
     }
 
     private void mostrarMenu() {
@@ -130,13 +131,15 @@ public class Controlador {
         }
     }
 
+
     private void crearConvocatoria() throws ValidacionException {
         ConvocatoriaExamen con = new ConvocatoriaExamen();
         con.setDatos();
         dao.crearConvocatoria(con);
     }
+    
+public void consultarEnunciadosPorUnidadDidactica() throws ValidacionException {
 
-    public void consultarEnunciadosPorUnidadDidactica() throws ValidacionException {
         List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
         boolean existe = true;
         if (unidades.isEmpty()) {
@@ -337,6 +340,17 @@ public class Controlador {
             System.err.println("❌ Error al crear Enunciado: " + ex.getMessage());
         }
     }
+    
+    public List<ConvocatoriaExamen> listarConvocatorias() {
+        return dao.listarConvocatorias();
+    }
+    
+    public static void visualizarDocumento() {
+        int idE = Utilidades.leerInt("Introduce el ID del enunciado que quieres visualizar:");
+        Enunciado enun = dao.obtenerRuta(idE);
+
+        if (enun != null && enun.getRuta() != null) {
+            System.out.println("Ruta del documento: " + enun.getRuta());
 
      private void asignarUnidadDidactica(Enunciado e) throws ValidacionException {
         List<UnidadDidactica> unidades = dao.listarUnidadesDidacticas();
@@ -359,7 +373,6 @@ public class Controlador {
             System.out.println("✅ Unidad didáctica agregada a enunciado "+ e.getIdE() + " con éxito.");
         }
 
-       
     }
      
       private UnidadDidactica buscarUnidadPorId(int idU) {
@@ -400,6 +413,7 @@ public class Controlador {
             c3.setFecha(java.sql.Date.valueOf("2025-07-10"));
             c3.setIdE(3);
 
+
             dao.crearConvocatoria(c1);
             dao.crearConvocatoria(c2);
             dao.crearConvocatoria(c3);
@@ -408,4 +422,14 @@ public class Controlador {
         }
     }
 
+
+    public static Enunciado obtenerRuta() {
+        int idEnn;
+
+        idEnn = Utilidades.leerInt("Introduce el id");
+
+        return dao.obtenerRuta(idEnn);
+    }
+    
 }
+

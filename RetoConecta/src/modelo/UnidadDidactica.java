@@ -52,8 +52,9 @@ public class UnidadDidactica {
     }
 
     public void setDatos() throws ValidacionException{
-        
+       
       //  this.idU = utilidades.Utilidades.leerInt("introduce el ID de la unidad didactica");
+
         this.acronimo = utilidades.Utilidades.introducirCadena("introduce el acronimo");
         this.titulo = utilidades.Utilidades.introducirCadena("introduce el titulo");
         this.evaluacion = utilidades.Utilidades.introducirCadena("Introduce la evaluacion");

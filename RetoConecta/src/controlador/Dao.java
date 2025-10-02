@@ -7,12 +7,24 @@ import modelo.Enunciado;
 import modelo.UnidadDidactica;
 
 public interface Dao {
+
     
       public void asignarEnunciadoAUnidad(int idE, int idU);
 
     public void crearConvocatoria(ConvocatoriaExamen convo);
 
+
     public List<ConvocatoriaExamen> listarConvocatorias();
+
+       // public ConvocatoriaExamen leerConvocatoria(int idC);
+        
+        //public ConvocatoriaExamen leerConvocatoria(int idC);
+        public  List<ConvocatoriaExamen> listarConvocatorias();
+
+        
+        public void crearUnidad(UnidadDidactica unid);
+        
+
 
     public List<ConvocatoriaExamen> convocatoriasPorEnunciado(int idE);
     
@@ -25,9 +37,12 @@ public interface Dao {
 
     public List<Enunciado> listarEnunciados();
 
+
     public Enunciado obtenerRuta(int IdE);
     
     public int crearEnunciado(Enunciado enun);
 
+
     public void asignarEnunciadoAConvocatoria(int idE, int idC);
 }
+
