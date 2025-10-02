@@ -1,19 +1,21 @@
 package modelo;
 
+import excepciones.ValidacionException;
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
+import utilidades.Utilidades;
 
-public class ConvocatoriaExamen {
+public class ConvocatoriaExamen implements Serializable {
+
     private int idC;
     private String convocatoria;
     private String descripcion;
-    private LocalDate fecha;
+    private Date fecha;
     private String curso;
-    private String ruta;
-    private Enunciado enunciado;  
+    private int IdE;
 
-    
     public int getIdC() {
         return idC;
     }
@@ -21,7 +23,7 @@ public class ConvocatoriaExamen {
     public void setIdC(int idC) {
         this.idC = idC;
     }
-    
+
     public String getConvocatoria() {
         return convocatoria;
     }
@@ -38,11 +40,11 @@ public class ConvocatoriaExamen {
         this.descripcion = descripcion;
     }
 
-    public LocalDate getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
@@ -54,22 +56,41 @@ public class ConvocatoriaExamen {
         this.curso = curso;
     }
 
-    public String getRuta() {
-        return ruta;
+    public int getIdE() {
+        return IdE;
     }
 
-    public void setRuta(String ruta) {
-        this.ruta = ruta;
+    public void setIdE(int IdE) {
+        this.IdE = IdE;
     }
 
-    public Enunciado getEnunciados() {
-        return enunciado;
-    }
+    public void setDatos() throws ValidacionException {
 
-    public void setEnunciados(Enunciado enunciado) {
-        this.enunciado = enunciado;
-    }
+        this.convocatoria = utilidades.Utilidades.introducirCadena("introduce la convocatoria");
+        this.descripcion = utilidades.Utilidades.introducirCadena("introduce la descripcion");
+        try {
+            String fechaInput = Utilidades.introducirCadena("Introduce la fecha (YYYY-MM-DD): ");
+            LocalDate fechaLocal = LocalDate.parse(fechaInput);
 
-    
-    
+            LocalDate hoy = LocalDate.now();
+            LocalDate limiteFutura = hoy.plusYears(30);
+
+            if (fechaLocal.isBefore(hoy)) {
+                throw new ValidacionException("La fecha no puede ser anterior a hoy.");
+            }
+            if (fechaLocal.isAfter(limiteFutura)) {
+                throw new ValidacionException("La fecha es muy lejana en el tiempo.");
+            }
+
+            this.fecha = Date.valueOf(fechaLocal);
+
+        } catch (IllegalArgumentException e) {
+            throw new ValidacionException("Formato de fecha inválido. Usa YYYY-MM-DD.");
+        }
+
+        this.curso = Utilidades.introducirCadena("Introduce el curso (YYYY-YYYY): ");
+        if (!this.curso.matches("\\d{4}-\\d{4}")) {
+            throw new ValidacionException("Formato de curso inválido. Debe ser YYYY-YYYY.");
+        }
+    }
 }
