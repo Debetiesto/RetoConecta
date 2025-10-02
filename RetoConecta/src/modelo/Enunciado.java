@@ -1,6 +1,8 @@
 package modelo;
 
+import excepciones.ValidacionException;
 import java.util.List;
+import utilidades.Utilidades;
 
 public class Enunciado {
 
@@ -11,22 +13,12 @@ public class Enunciado {
     private String ruta;
     private List<UnidadDidactica> unidades;
 
-    public Enunciado(int idE, String descripcion, Dificultad nivel, boolean disponible, String ruta, List<UnidadDidactica> unidades) {
-        this.idE = idE;
-        this.descripcion = descripcion;
-        this.nivel = nivel;
-        this.disponible = disponible;
-        this.ruta = ruta;
-        this.unidades = unidades;
-    }
-
-    
     public Enunciado(List<UnidadDidactica> unidades) {
         this.unidades = unidades;
     }
 
     public Enunciado() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     public int getIdE() {
@@ -75,6 +67,22 @@ public class Enunciado {
 
     public void setUnidades(List<UnidadDidactica> unidades) {
         this.unidades = unidades;
+    }
+
+    public void setDatos() throws ValidacionException {
+        String nivelStr;
+        this.descripcion = Utilidades.introducirCadena("Introduce la descripción del enunciado: ");
+
+        nivelStr = Utilidades.introducirCadena("Introduce el nivel (ALTA, MEDIA, BAJA): ");
+        try {
+            this.nivel = Dificultad.obtenerPorNombre(nivelStr);
+        } catch (IllegalArgumentException e) {
+            throw new ValidacionException("Nivel no válido. Solo: ALTA, MEDIA o BAJA.");
+        }
+
+        this.disponible = Utilidades.leerRespuesta("¿Está disponible? (s/n): ");
+
+        this.ruta = Utilidades.introducirCadena("Introduce la ruta del documento (ej: docs/enunciado1.pdf): ");
     }
 
 }
